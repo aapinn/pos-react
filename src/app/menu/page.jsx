@@ -6,34 +6,42 @@ import { products } from '../data';
 import { ConfirmComponent } from '../components/ConfirmComponent';
 
 function Page() {
-  const [items, setItems] = useState(() => {
-    // Ambil data dari localStorage saat inisialisasi state
-    const savedItems = localStorage.getItem('items');
-    return savedItems ? JSON.parse(savedItems) : [];
-  });
+  const [items, setItems] = useState([]);
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const confirmRef = useRef(null);
+  const [customerData, setCustomerData] = useState({});
+  
+  // Mengecek apakah window (client-side) sudah tersedia
+  const isClient = typeof window !== "undefined";
+
+  // Ambil data dari localStorage hanya jika berada di client-side
+  useEffect(() => {
+    if (isClient) {
+      const savedItems = localStorage.getItem('items');
+      const savedCustomerData = localStorage.getItem('customerData');
+      if (savedItems) setItems(JSON.parse(savedItems));
+      if (savedCustomerData) setCustomerData(JSON.parse(savedCustomerData));
+    }
+  }, [isClient]);
 
   const clearData = () => {
     setItems([]);
     setCustomerData({});
   };
 
-  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
-  const confirmRef = useRef(null);
-  
-  const [customerData, setCustomerData] = useState(() => {
-    const savedCustomerData = localStorage.getItem('customerData');
-    return savedCustomerData ? JSON.parse(savedCustomerData) : {};
-  });
-
   // Simpan perubahan items ke localStorage
   useEffect(() => {
-    localStorage.setItem('items', JSON.stringify(items));
-  }, [items]);
+    if (isClient) {
+      localStorage.setItem('items', JSON.stringify(items));
+    }
+  }, [items, isClient]);
 
   // Simpan perubahan customerData ke localStorage
   useEffect(() => {
-    localStorage.setItem('customerData', JSON.stringify(customerData));
-  }, [customerData]);
+    if (isClient) {
+      localStorage.setItem('customerData', JSON.stringify(customerData));
+    }
+  }, [customerData, isClient]);
 
   const addItem = (productId) => {
     const product = products.find((p) => p.id === productId);

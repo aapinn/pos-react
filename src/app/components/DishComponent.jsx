@@ -5,7 +5,7 @@ import { LuQrCode } from "react-icons/lu";
 import Image from "next/image";
 import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
 function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveCustomerData, clearData }) {
@@ -13,24 +13,39 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
   const [paymentSelect, setPaymentSelect] = useState("Cash");
   const [customerName, setCustomerName] = useState("");
 
- // Fungsi untuk menghapus item dan data customer
- const clearItemsAndCustomerData = () => {
-  // Menghapus data dari state dan localStorage
-  localStorage.removeItem('items');
-  localStorage.removeItem('customerData');
-  // Mengosongkan state
-  clearData();  // Panggil fungsi clearData dari parent
-};
+  // Cek apakah di sisi client atau server
+  const isClient = typeof window !== "undefined";
 
+  // Fungsi untuk menghapus item dan data customer dari localStorage dan state
+  const clearItemsAndCustomerData = () => {
+    Swal.fire({
+      title: "Clear All Data?",
+      text: "This will remove all items and customer data!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, clear it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (isClient) {
+          localStorage.removeItem("items");
+          localStorage.removeItem("customerData");
+        }
+        clearData();  // Panggil fungsi clearData dari parent untuk membersihkan state
+        Swal.fire("Cleared!", "All data has been cleared.", "success");
+      }
+    });
+  };
 
   const handleSelect = (option) => setSelectedOption(option);
   const handlePayment = (option) => setPaymentSelect(option);
+
   const saveCustomerData = () => {
     const trimmedName = customerName.trim();
     if (!trimmedName) {
       Swal.fire({
         title: "Enter Valid Customer Name",
-        text: "Check again",
+        text: "Please enter a name.",
         icon: "error",
       });
       return;
@@ -44,6 +59,19 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
 
     onSaveCustomerData(customerData); // Kirim data ke komponen utama
   };
+
+  useEffect(() => {
+    // Cek apakah ada data pelanggan yang sudah disimpan
+    if (isClient) {
+      const savedCustomerData = localStorage.getItem("customerData");
+      if (savedCustomerData) {
+        const { name, serviceType, paymentMethod } = JSON.parse(savedCustomerData);
+        setCustomerName(name || "");
+        setSelectedOption(serviceType || "Dine In");
+        setPaymentSelect(paymentMethod || "Cash");
+      }
+    }
+  }, [isClient]);
 
   return (
     <div className="hidden xl:block xl:fixed bg-white min-w-[18rem] xl:w-[20rem] h-full top-0 right-0 z-30 lg:overflow-y-auto scrollbar-hide">
@@ -73,9 +101,7 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
               {["Dine In", "Take Away", "Delivery"].map((option) => (
                 <button
                   key={option}
-                  className={`px-5 w-full rounded-xl ${
-                    selectedOption === option ? "bg-green-500 text-white" : "bg-gray-200"
-                  }`}
+                  className={`px-5 w-full rounded-xl ${selectedOption === option ? "bg-green-500 text-white" : "bg-gray-200"}`}
                   onClick={() => handleSelect(option)}
                 >
                   {option}
@@ -157,9 +183,7 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
               <div key={label} className="flex flex-col justify-center gap-2 items-center">
                 <button
                   onClick={() => handlePayment(label)}
-                  className={`border-2 rounded-xl py-3 px-5 ${
-                    paymentSelect === label ? "border-green-500" : "bg-white"
-                  } hover:border-green-500 active:bg-green-100`}
+                  className={`border-2 rounded-xl py-3 px-5 ${paymentSelect === label ? "border-green-500" : "bg-white"}`}
                 >
                   <Icon className="text-xs xl:text-4xl" />
                 </button>

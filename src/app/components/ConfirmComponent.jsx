@@ -3,6 +3,9 @@ import React from 'react';
 import Swal from 'sweetalert2';
 
 export const ConfirmComponent = ({ items, dataCustomer, clearData }) => {
+  // Mengecek apakah kode berjalan di sisi klien
+  const isClient = typeof window !== "undefined";
+
   // Fungsi untuk memproses seluruh items dan menyimpan ke localStorage
   const ConfirmAll = (items) => {
     if (!items || items.length === 0) {
@@ -17,14 +20,16 @@ export const ConfirmComponent = ({ items, dataCustomer, clearData }) => {
         text: "Thank you for your order!",
         icon: "success",
       }).then(() => {
-        // Simpan data statis ke localStorage dengan ID unik
-        const orderData = {
-          timestamp: new Date().toISOString(),
-          items,
-          customerData: dataCustomer,
-        };
-        const orderKey = `order_${Date.now()}`;
-        localStorage.setItem(orderKey, JSON.stringify(orderData));
+        // Simpan data statis ke localStorage dengan ID unik, hanya di client-side
+        if (isClient) {
+          const orderData = {
+            timestamp: new Date().toISOString(),
+            items,
+            customerData: dataCustomer,
+          };
+          const orderKey = `order_${Date.now()}`;
+          localStorage.setItem(orderKey, JSON.stringify(orderData));
+        }
 
         clearData(); // Hapus semua data items setelah konfirmasi
       });
