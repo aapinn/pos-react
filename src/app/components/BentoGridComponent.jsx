@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BentoGrid, BentoGridItem } from "../../components/ui/bento-grid";
 import { products } from "../data";
-import SearchComponent from "./searchComponent";
+import SearchComponent from "./searchComponent.jsx";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export function BentoGridComponent({ addItem }) {
