@@ -116,7 +116,7 @@ function OrderHistoryComponent() {
   if (!isClient) return null; // Menjaga agar tidak terjadi kesalahan di sisi server
 
   return (
-    <div className="order-history my-5 max-w-4xl md:px-5 z-20 gap-6 mx-auto lg:ml-[15rem] font-sans">
+    <div className="order-history mx-5 my-5 max-w-4xl md:px-5 z-20 gap-6 mx-auto lg:ml-[15rem] font-sans">
       <h2 className="font-bold text-xl mb-4">Order History</h2>
 
       <div className="mb-4">

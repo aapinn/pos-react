@@ -4,7 +4,7 @@ import { products } from "../data";
 import SearchComponent from "../components/SearchComponent";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-export function BentoGridComponent({ addItem }) {
+export function BentoGridComponent({ addItem, collapse }) {
   // State untuk menyimpan produk yang difilter
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [lottieLoaded, setLottieLoaded] = useState(false); // State untuk lottie
@@ -30,19 +30,19 @@ export function BentoGridComponent({ addItem }) {
     setLottieLoaded(true); // Set Lottie loaded saat pertama kali dimount
   }, []);
 
+
   return (
     <div className="max-w-4xl md:px-5 z-20 gap-6 xl:mr-[18rem] mx-auto lg:ml-[13rem] font-sans">
-      <SearchComponent onSearch={handleSearchFromParent} />
+      <SearchComponent collapse={collapse} onSearch={handleSearchFromParent} />
 
       {/* Menampilkan pesan jika tidak ada produk yang ditemukan */}
       {filteredProducts.length === 0 ? (
-        <div className="relative m-auto w-full h-svh flex flex-col items-center py-5">
+        <div className="relative m-auto h-svh flex flex-col items-center py-5">
           <h1 className="italic">Produk tidak ditemukan</h1>
 
           {/* Pastikan Lottie hanya ditampilkan jika sudah dimuat */}
           {lottieLoaded && (
             <DotLottieReact
-              className="w-[50rem]"
               src="https://lottie.host/c9819c4c-e787-4e0a-b86c-edfe66588b60/2dTfNBA4z2.lottie"
               loop
               autoplay

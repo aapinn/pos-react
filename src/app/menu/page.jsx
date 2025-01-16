@@ -95,9 +95,13 @@ function Page() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  const [isCollapsed, setIsCollapsed] = useState(true)
+  const collapse = () => {
+    setIsCollapsed(!isCollapsed)
+  }
 
   return (
-    <div className='relative w-full h-full flex justify-center'>
+    <div className='relative bg-neutral-100 w-full h-full flex justify-center'>
       <div
         ref={confirmRef}
         className={`${
@@ -113,8 +117,10 @@ function Page() {
 
       <main className='w-full bg-neutral-100'>
         <section className='relative container flex lg:w-full gap-5 flex-col justify-between py-2 md:py-5'>
-          <BentoGridComponent products={products} addItem={addItem} />
+          <BentoGridComponent collapse={collapse} products={products} addItem={addItem} />
           <DishComponent
+            collapse={collapse}
+            isCollapsed={isCollapsed}
             items={items}
             addItem={addItem}
             removeItem={removeItem}

@@ -7,8 +7,9 @@ import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import { LuSettings2 } from "react-icons/lu";
 
-function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveCustomerData, clearData }) {
+function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveCustomerData, clearData, isCollapsed, collapse }) {
   const [selectedOption, setSelectedOption] = useState("Dine In");
   const [paymentSelect, setPaymentSelect] = useState("Cash");
   const [customerName, setCustomerName] = useState("");
@@ -72,9 +73,14 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
       }
     }
   }, [isClient]);
+  
 
   return (
-    <div className="hidden xl:block xl:fixed bg-white min-w-[18rem] xl:w-[20rem] h-full top-0 right-0 z-30 lg:overflow-y-auto scrollbar-hide">
+    <div
+  className={`bg-white min-w-[18rem] xl:w-[20rem] h-full top-0 right-0 z-30 lg:overflow-y-auto scrollbar-hide fixed transition-transform duration-300 ${
+    isCollapsed ? 'translate-x-full xl:translate-x-0' : 'translate-x-0'
+  }`}
+>
       <div className="flex flex-col h-[100svh] lg:absolute sticky w-full pt-2 font-sans">
         {/* Header */}
         <header className="pt-3 px-5 h-fit">
@@ -82,6 +88,11 @@ function DishComponent({ items = [], addItem, removeItem, toggleConfirm, onSaveC
             <div className="w-full">
               <h1 className="font-bold text-xl text-neutral-700">Table Customer</h1>
               <p className="text-sm text-neutral-600 font-sans">Data Customer</p>
+              <button
+                onClick={collapse}
+                className="p-3 absolute right-5 top-5 rounded-full bg-gray-100 hover:bg-gray-200 text-2xl transition-colors duration-200">
+                <LuSettings2 />
+              </button>
               <div className="border w-full justify-center items-center gap-2 flex border-green-500 px-2 rounded-lg my-2">
                 <MdDriveFileRenameOutline />
                 <input
